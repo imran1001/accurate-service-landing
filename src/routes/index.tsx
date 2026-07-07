@@ -333,7 +333,7 @@ function Index() {
                     <MobileIcon /> Mobile Wallets
                   </div>
                   <div className="mt-4 space-y-3 text-sm">
-                    <Row label="JazzCash / Easypaisa" value="0316 0285386" />
+                    <Row label="Easypaisa" value="0316 0285386" />
                     <Row label="Account Name" value="Muhammad Imran Malik" />
                   </div>
                   <div className="mt-6 rounded-lg bg-gold/10 p-3 text-xs text-gold">
@@ -519,7 +519,7 @@ function CompleteFileForm({ onSubmit }: FormProps) {
       fullName: "Full Name",
       phone: "WhatsApp Number",
       targetCountry: "Target Country",
-      travelMonth: "Tentative Travel Month",
+      travelMonth: "Travel Dates",
     });
     onSubmit(summary);
   };
