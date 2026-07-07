@@ -17,6 +17,8 @@ const OTHER_COUNTRIES = [
   "United Kingdom", "Ireland", "Canada", "Australia", "USA", "New Zealand",
 ];
 
+const ALL_DESTINATIONS = [...SCHENGEN_COUNTRIES, ...OTHER_COUNTRIES];
+
 const PURPOSE_OPTIONS = ["Tourism", "Business", "Family Visit", "Medical", "Other"];
 
 const SERVICE_META: Record<string, { name: string; price: string }> = {
@@ -49,6 +51,7 @@ const FAQS = [
   { q: "How do I share documents with you?", a: "Everything happens on WhatsApp — after payment confirmation, our team will guide you through document submission step by step." },
 ];
 
+/* Turns a submission object into readable WhatsApp lines, skipping empty values */
 function buildSummaryLines(data: Record<string, string>, labels: Record<string, string>) {
   return Object.entries(data)
     .filter(([, val]) => val && val.trim() !== "")
@@ -88,6 +91,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
+      {/* NAV */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-navy/95 backdrop-blur supports-[backdrop-filter]:bg-navy/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-navy-foreground">
@@ -108,6 +112,7 @@ function Index() {
         </div>
       </header>
 
+      {/* HERO */}
       <section className="relative overflow-hidden bg-navy text-navy-foreground">
         <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: "radial-gradient(circle at 20% 10%, rgba(212,175,55,0.35), transparent 40%), radial-gradient(circle at 80% 90%, rgba(212,175,55,0.25), transparent 45%)",
@@ -157,6 +162,7 @@ function Index() {
         </div>
       </section>
 
+      {/* SERVICES */}
       <section ref={servicesRef} id="services" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-navy sm:text-4xl">Services & Packages</h2>
@@ -166,6 +172,7 @@ function Index() {
         </div>
 
         <div className="mt-14 grid gap-6 lg:grid-cols-3">
+          {/* À la carte */}
           <div className="flex flex-col rounded-2xl border border-border bg-card p-8 shadow-sm">
             <h3 className="text-xl font-bold text-navy">À La Carte Services</h3>
             <p className="mt-2 text-sm text-muted-foreground">Individual documents, when you only need one piece.</p>
@@ -192,6 +199,7 @@ function Index() {
             </div>
           </div>
 
+          {/* Complete – featured */}
           <div className="relative flex flex-col rounded-2xl border-2 border-gold bg-navy p-8 text-navy-foreground shadow-xl shadow-navy/10 lg:-translate-y-4">
             <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gold px-4 py-1 text-xs font-bold uppercase tracking-wider text-gold-foreground">
               Most Popular
@@ -226,6 +234,7 @@ function Index() {
             </button>
           </div>
 
+          {/* Appointment + Umrah stacked */}
           <div className="flex flex-col gap-6">
             <div className="flex flex-col rounded-2xl border border-border bg-card p-8 shadow-sm">
               <h3 className="text-xl font-bold text-navy">Appointment Assistance</h3>
@@ -264,6 +273,7 @@ function Index() {
         </div>
       </section>
 
+      {/* FORMS */}
       <div ref={formRef}>
         {selectedService && !submitted && (
           <section className="border-y border-border bg-secondary/40">
@@ -290,6 +300,7 @@ function Index() {
         )}
       </div>
 
+      {/* PAYMENT */}
       <div ref={paymentRef}>
         {submitted && (
           <section className="border-y-4 border-gold bg-navy text-navy-foreground">
@@ -307,46 +318,22 @@ function Index() {
               <div className="mt-10 grid gap-5 sm:grid-cols-2">
                 <div className="rounded-2xl border-2 border-gold bg-navy-foreground/10 p-6 shadow-lg">
                   <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
-                    <span className="text-lg">🏛️</span> Bank Transfer
+                    <BankIcon /> Bank Transfer
                   </div>
                   <div className="mt-4 space-y-3 text-sm">
-                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
-                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Account Title</span>
-                      <span className="text-right font-bold text-navy-foreground">Muhammad Imran Malik</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
-                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Bank</span>
-                      <span className="text-right font-bold text-navy-foreground">MCB Bank Limited, Lahore</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
-                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Account #</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-right font-mono font-bold text-navy-foreground text-lg sm:text-xl">1069209731000337</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
-                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">IBAN</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-right font-mono font-bold text-navy-foreground text-lg sm:text-xl">PK85MUCB1069209731000337</span>
-                      </div>
-                    </div>
+                    <Row label="Account Title" value="Muhammad Imran Malik" />
+                    <Row label="Bank" value="MCB Bank Limited, Lahore" />
+                    <Row label="Account #" value="1069209731000337" mono big copyable />
+                    <Row label="IBAN" value="PK85MUCB1069209731000337" mono big copyable />
                   </div>
                 </div>
                 <div className="rounded-2xl border-2 border-gold bg-navy-foreground/10 p-6 shadow-lg">
                   <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
-                    <span className="text-lg">📱</span> EasyPaisa
+                    <WalletIcon /> EasyPaisa
                   </div>
                   <div className="mt-4 space-y-3 text-sm">
-                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
-                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Account Title</span>
-                      <span className="text-right font-bold text-navy-foreground">Muhammad Imran Malik</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
-                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Number</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-right font-mono font-bold text-navy-foreground text-lg sm:text-xl">0316 0285386</span>
-                      </div>
-                    </div>
+                    <Row label="Account Title" value="Muhammad Imran Malik" />
+                    <Row label="Number" value="0316 0285386" mono big copyable />
                   </div>
                   <div className="mt-6 rounded-lg bg-gold/10 p-3 text-xs text-gold">
                     ⚡ Instant verification available via WhatsApp after transfer.
@@ -366,7 +353,7 @@ function Index() {
                 rel="noopener noreferrer"
                 className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-[oklch(0.68_0.17_150)] py-5 text-lg font-bold text-white shadow-xl shadow-black/20 transition-transform hover:-translate-y-0.5"
               >
-                <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" aria-hidden><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5 0-.2 0-.4-.1-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.2zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+                <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" aria-hidden><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5 0-.2 0-.4-.1-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.2zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
                 Send Payment Receipt on WhatsApp
               </a>
               <p className="mt-3 text-center text-xs text-navy-foreground/60">
@@ -377,6 +364,7 @@ function Index() {
         )}
       </div>
 
+      {/* COUNTRIES */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-navy sm:text-4xl">Countries We Serve</h2>
@@ -392,6 +380,7 @@ function Index() {
         </div>
       </section>
 
+      {/* E-VISA + TOURS */}
       <section className="bg-secondary/40 py-20 sm:py-24">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div className="rounded-2xl border border-border bg-card p-8">
@@ -428,6 +417,7 @@ function Index() {
         </div>
       </section>
 
+      {/* TRUST */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -445,6 +435,7 @@ function Index() {
         </div>
       </section>
 
+      {/* FAQ */}
       <section id="faq" className="bg-secondary/40 py-20 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -470,6 +461,7 @@ function Index() {
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="bg-navy text-navy-foreground">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-3 lg:px-8">
           <div>
@@ -505,7 +497,435 @@ function Index() {
   );
 }
 
-// ===== FORM COMPONENTS =====
-
 const inputCls =
-  "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border
+  "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-navy focus:ring-2 focus:ring-navy/20";
+
+function Field({ label, required, children, className = "" }: { label: string; required?: boolean; children: ReactNode; className?: string }) {
+  return (
+    <label className={`block ${className}`}>
+      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-navy">
+        {label} {required && <span className="text-destructive">*</span>}
+      </span>
+      {children}
+    </label>
+  );
+}
+
+function BankIcon() {
+  return <span className="text-lg">🏛️</span>;
+}
+
+function WalletIcon() {
+  return <span className="text-lg">📱</span>;
+}
+
+function CopyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
+      <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z" />
+    </svg>
+  );
+}
+
+function Row({ label, value, mono, big, copyable }: { label: string; value: string; mono?: boolean; big?: boolean; copyable?: boolean }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value.replace(/\s/g, ""));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
+      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">{label}</span>
+      <div className="flex items-center gap-2">
+        <span
+          className={`text-right font-bold text-navy-foreground ${mono ? "font-mono" : ""} ${
+            big ? "text-lg sm:text-xl" : "text-sm"
+          }`}
+        >
+          {value}
+        </span>
+        {copyable && (
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex-none rounded-md bg-gold/20 p-1.5 text-gold transition-colors hover:bg-gold hover:text-gold-foreground"
+            aria-label={`Copy ${label}`}
+          >
+            {copied ? <span className="block px-1 text-[10px] font-bold">✓</span> : <CopyIcon />}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SubmitBtn() {
+  return (
+    <div className="sm:col-span-2">
+      <button
+        type="submit"
+        className="w-full rounded-lg bg-navy py-3.5 text-sm font-semibold text-navy-foreground transition-transform hover:-translate-y-0.5"
+      >
+        Continue to Payment →
+      </button>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* Shared form pieces                                                     */
+/* ---------------------------------------------------------------------- */
+
+const selectCls = inputCls + " bg-background";
+
+function DestinationSelect({ value, onChange, required }: { value: string; onChange: (v: string) => void; required?: boolean }) {
+  return (
+    <select
+      required={required}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={selectCls}
+    >
+      <option value="">Select destination</option>
+      <optgroup label="Schengen Area">
+        {SCHENGEN_COUNTRIES.map((c) => (
+          <option key={c} value={c}>{c}</option>
+        ))}
+      </optgroup>
+      <optgroup label="Other Destinations">
+        {OTHER_COUNTRIES.map((c) => (
+          <option key={c} value={c}>{c}</option>
+        ))}
+      </optgroup>
+    </select>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* FlightHotelForm                                                        */
+/* ---------------------------------------------------------------------- */
+
+function FlightHotelForm({ onSubmit }: { onSubmit: (summary: string) => void }) {
+  const [fullName, setFullName] = useState("");
+  const [passportNumber, setPassportNumber] = useState("");
+  const [destination, setDestination] = useState("");
+  const [departureDate, setDepartureDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const data = { fullName, passportNumber, destination, departureDate, returnDate, notes };
+    const labels: Record<string, string> = {
+      fullName: "Full Name",
+      passportNumber: "Passport Number",
+      destination: "Destination",
+      departureDate: "Departure Date",
+      returnDate: "Return Date",
+      notes: "Additional Notes",
+    };
+    onSubmit(buildSummaryLines(data, labels));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Field label="Full Name (as on passport)" required>
+        <input required className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Muhammad Ali Khan" />
+      </Field>
+      <Field label="Passport Number" required>
+        <input required className={inputCls} value={passportNumber} onChange={(e) => setPassportNumber(e.target.value)} placeholder="e.g. AB1234567" />
+      </Field>
+      <Field label="Destination" required>
+        <DestinationSelect value={destination} onChange={setDestination} required />
+      </Field>
+      <div />
+      <Field label="Departure Date" required>
+        <input required type="date" className={inputCls} value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} />
+      </Field>
+      <Field label="Return Date" required>
+        <input required type="date" className={inputCls} value={returnDate} onChange={(e) => setReturnDate(e.target.value)} />
+      </Field>
+      <Field label="Additional Notes" className="sm:col-span-2">
+        <textarea className={inputCls} rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Preferred airline, hotel area, budget, etc." />
+      </Field>
+      <SubmitBtn />
+    </form>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* CoverItineraryForm                                                     */
+/* ---------------------------------------------------------------------- */
+
+function CoverItineraryForm({ onSubmit }: { onSubmit: (summary: string) => void }) {
+  const [fullName, setFullName] = useState("");
+  const [destination, setDestination] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [travelStartDate, setTravelStartDate] = useState("");
+  const [travelEndDate, setTravelEndDate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const data = { fullName, destination, purpose, travelStartDate, travelEndDate, notes };
+    const labels: Record<string, string> = {
+      fullName: "Full Name",
+      destination: "Destination",
+      purpose: "Purpose of Travel",
+      travelStartDate: "Travel Start Date",
+      travelEndDate: "Travel End Date",
+      notes: "Additional Notes",
+    };
+    onSubmit(buildSummaryLines(data, labels));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Field label="Full Name" required>
+        <input required className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} />
+      </Field>
+      <Field label="Destination" required>
+        <DestinationSelect value={destination} onChange={setDestination} required />
+      </Field>
+      <Field label="Purpose of Travel" required>
+        <select required className={selectCls} value={purpose} onChange={(e) => setPurpose(e.target.value)}>
+          <option value="">Select purpose</option>
+          {PURPOSE_OPTIONS.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+      </Field>
+      <div />
+      <Field label="Travel Start Date" required>
+        <input required type="date" className={inputCls} value={travelStartDate} onChange={(e) => setTravelStartDate(e.target.value)} />
+      </Field>
+      <Field label="Travel End Date" required>
+        <input required type="date" className={inputCls} value={travelEndDate} onChange={(e) => setTravelEndDate(e.target.value)} />
+      </Field>
+      <Field label="Additional Notes" className="sm:col-span-2">
+        <textarea className={inputCls} rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything specific for the cover letter or itinerary" />
+      </Field>
+      <SubmitBtn />
+    </form>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* InsuranceForm                                                          */
+/* ---------------------------------------------------------------------- */
+
+function InsuranceForm({ onSubmit }: { onSubmit: (summary: string) => void }) {
+  const [fullName, setFullName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [destination, setDestination] = useState("");
+  const [travelStartDate, setTravelStartDate] = useState("");
+  const [travelEndDate, setTravelEndDate] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const data = { fullName, dateOfBirth, destination, travelStartDate, travelEndDate };
+    const labels: Record<string, string> = {
+      fullName: "Full Name",
+      dateOfBirth: "Date of Birth",
+      destination: "Destination",
+      travelStartDate: "Coverage Start Date",
+      travelEndDate: "Coverage End Date",
+    };
+    onSubmit(buildSummaryLines(data, labels));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Field label="Full Name" required>
+        <input required className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} />
+      </Field>
+      <Field label="Date of Birth" required>
+        <input required type="date" className={inputCls} value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
+      </Field>
+      <Field label="Destination" required>
+        <DestinationSelect value={destination} onChange={setDestination} required />
+      </Field>
+      <div />
+      <Field label="Coverage Start Date" required>
+        <input required type="date" className={inputCls} value={travelStartDate} onChange={(e) => setTravelStartDate(e.target.value)} />
+      </Field>
+      <Field label="Coverage End Date" required>
+        <input required type="date" className={inputCls} value={travelEndDate} onChange={(e) => setTravelEndDate(e.target.value)} />
+      </Field>
+      <SubmitBtn />
+    </form>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* CompleteFileForm                                                       */
+/* ---------------------------------------------------------------------- */
+
+function CompleteFileForm({ onSubmit }: { onSubmit: (summary: string) => void }) {
+  const [fullName, setFullName] = useState("");
+  const [passportNumber, setPassportNumber] = useState("");
+  const [destination, setDestination] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [travelStartDate, setTravelStartDate] = useState("");
+  const [travelEndDate, setTravelEndDate] = useState("");
+  const [numberOfTravelers, setNumberOfTravelers] = useState("1");
+  const [notes, setNotes] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const data = {
+      fullName, passportNumber, destination, purpose,
+      travelStartDate, travelEndDate, numberOfTravelers, notes,
+    };
+    const labels: Record<string, string> = {
+      fullName: "Full Name",
+      passportNumber: "Passport Number",
+      destination: "Destination",
+      purpose: "Purpose of Travel",
+      travelStartDate: "Travel Start Date",
+      travelEndDate: "Travel End Date",
+      numberOfTravelers: "Number of Travelers",
+      notes: "Additional Notes",
+    };
+    onSubmit(buildSummaryLines(data, labels));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Field label="Full Name (as on passport)" required>
+        <input required className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} />
+      </Field>
+      <Field label="Passport Number" required>
+        <input required className={inputCls} value={passportNumber} onChange={(e) => setPassportNumber(e.target.value)} />
+      </Field>
+      <Field label="Destination" required>
+        <DestinationSelect value={destination} onChange={setDestination} required />
+      </Field>
+      <Field label="Purpose of Travel" required>
+        <select required className={selectCls} value={purpose} onChange={(e) => setPurpose(e.target.value)}>
+          <option value="">Select purpose</option>
+          {PURPOSE_OPTIONS.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label="Travel Start Date" required>
+        <input required type="date" className={inputCls} value={travelStartDate} onChange={(e) => setTravelStartDate(e.target.value)} />
+      </Field>
+      <Field label="Travel End Date" required>
+        <input required type="date" className={inputCls} value={travelEndDate} onChange={(e) => setTravelEndDate(e.target.value)} />
+      </Field>
+      <Field label="Number of Travelers" required>
+        <input required type="number" min="1" className={inputCls} value={numberOfTravelers} onChange={(e) => setNumberOfTravelers(e.target.value)} />
+      </Field>
+      <div />
+      <Field label="Additional Notes" className="sm:col-span-2">
+        <textarea className={inputCls} rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Employment details, prior refusals, sponsor info, etc." />
+      </Field>
+      <SubmitBtn />
+    </form>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* AppointmentForm                                                        */
+/* ---------------------------------------------------------------------- */
+
+function AppointmentForm({ onSubmit }: { onSubmit: (summary: string) => void }) {
+  const [fullName, setFullName] = useState("");
+  const [destination, setDestination] = useState("");
+  const [city, setCity] = useState("");
+  const [preferredDateRange, setPreferredDateRange] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const data = { fullName, destination, city, preferredDateRange, notes };
+    const labels: Record<string, string> = {
+      fullName: "Full Name",
+      destination: "Destination / Embassy",
+      city: "Application Center City",
+      preferredDateRange: "Preferred Date Range",
+      notes: "Additional Notes",
+    };
+    onSubmit(buildSummaryLines(data, labels));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Field label="Full Name" required>
+        <input required className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} />
+      </Field>
+      <Field label="Destination / Embassy" required>
+        <DestinationSelect value={destination} onChange={setDestination} required />
+      </Field>
+      <Field label="Application Center City" required>
+        <input required className={inputCls} value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Lahore, Islamabad, Karachi" />
+      </Field>
+      <Field label="Preferred Date Range" required>
+        <input required className={inputCls} value={preferredDateRange} onChange={(e) => setPreferredDateRange(e.target.value)} placeholder="e.g. Between 10–25 August 2026" />
+      </Field>
+      <Field label="Additional Notes" className="sm:col-span-2">
+        <textarea className={inputCls} rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any urgent travel dates or constraints" />
+      </Field>
+      <SubmitBtn />
+    </form>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* UmrahForm                                                              */
+/* ---------------------------------------------------------------------- */
+
+const UMRAH_TIERS = ["Economy", "Standard", "Premium"];
+
+function UmrahForm({ onSubmit }: { onSubmit: (summary: string) => void }) {
+  const [fullName, setFullName] = useState("");
+  const [numberOfPilgrims, setNumberOfPilgrims] = useState("1");
+  const [packageTier, setPackageTier] = useState("");
+  const [preferredDates, setPreferredDates] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const data = { fullName, numberOfPilgrims, packageTier, preferredDates, notes };
+    const labels: Record<string, string> = {
+      fullName: "Contact Full Name",
+      numberOfPilgrims: "Number of Pilgrims",
+      packageTier: "Package Tier",
+      preferredDates: "Preferred Travel Dates",
+      notes: "Additional Notes",
+    };
+    onSubmit(buildSummaryLines(data, labels));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Field label="Contact Full Name" required>
+        <input required className={inputCls} value={fullName} onChange={(e) => setFullName(e.target.value)} />
+      </Field>
+      <Field label="Number of Pilgrims" required>
+        <input required type="number" min="1" className={inputCls} value={numberOfPilgrims} onChange={(e) => setNumberOfPilgrims(e.target.value)} />
+      </Field>
+      <Field label="Package Tier" required>
+        <select required className={selectCls} value={packageTier} onChange={(e) => setPackageTier(e.target.value)}>
+          <option value="">Select tier</option>
+          {UMRAH_TIERS.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label="Preferred Travel Dates" required>
+        <input required className={inputCls} value={preferredDates} onChange={(e) => setPreferredDates(e.target.value)} placeholder="e.g. Mid-Ramadan 2027" />
+      </Field>
+      <Field label="Additional Notes" className="sm:col-span-2">
+        <textarea className={inputCls} rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Hotel proximity preference, room sharing, etc." />
+      </Field>
+      <SubmitBtn />
+    </form>
+  );
+}
+
