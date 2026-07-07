@@ -49,7 +49,6 @@ const FAQS = [
   { q: "How do I share documents with you?", a: "Everything happens on WhatsApp — after payment confirmation, our team will guide you through document submission step by step." },
 ];
 
-/* Turns a submission object into readable WhatsApp lines, skipping empty values */
 function buildSummaryLines(data: Record<string, string>, labels: Record<string, string>) {
   return Object.entries(data)
     .filter(([, val]) => val && val.trim() !== "")
@@ -89,7 +88,6 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
-      {/* NAV */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-navy/95 backdrop-blur supports-[backdrop-filter]:bg-navy/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-navy-foreground">
@@ -110,7 +108,6 @@ function Index() {
         </div>
       </header>
 
-      {/* HERO */}
       <section className="relative overflow-hidden bg-navy text-navy-foreground">
         <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: "radial-gradient(circle at 20% 10%, rgba(212,175,55,0.35), transparent 40%), radial-gradient(circle at 80% 90%, rgba(212,175,55,0.25), transparent 45%)",
@@ -160,7 +157,6 @@ function Index() {
         </div>
       </section>
 
-      {/* SERVICES */}
       <section ref={servicesRef} id="services" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-navy sm:text-4xl">Services & Packages</h2>
@@ -170,7 +166,6 @@ function Index() {
         </div>
 
         <div className="mt-14 grid gap-6 lg:grid-cols-3">
-          {/* À la carte */}
           <div className="flex flex-col rounded-2xl border border-border bg-card p-8 shadow-sm">
             <h3 className="text-xl font-bold text-navy">À La Carte Services</h3>
             <p className="mt-2 text-sm text-muted-foreground">Individual documents, when you only need one piece.</p>
@@ -197,7 +192,6 @@ function Index() {
             </div>
           </div>
 
-          {/* Complete – featured */}
           <div className="relative flex flex-col rounded-2xl border-2 border-gold bg-navy p-8 text-navy-foreground shadow-xl shadow-navy/10 lg:-translate-y-4">
             <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gold px-4 py-1 text-xs font-bold uppercase tracking-wider text-gold-foreground">
               Most Popular
@@ -232,7 +226,6 @@ function Index() {
             </button>
           </div>
 
-          {/* Appointment + Umrah stacked */}
           <div className="flex flex-col gap-6">
             <div className="flex flex-col rounded-2xl border border-border bg-card p-8 shadow-sm">
               <h3 className="text-xl font-bold text-navy">Appointment Assistance</h3>
@@ -271,7 +264,6 @@ function Index() {
         </div>
       </section>
 
-      {/* FORMS */}
       <div ref={formRef}>
         {selectedService && !submitted && (
           <section className="border-y border-border bg-secondary/40">
@@ -298,7 +290,6 @@ function Index() {
         )}
       </div>
 
-      {/* PAYMENT */}
       <div ref={paymentRef}>
         {submitted && (
           <section className="border-y-4 border-gold bg-navy text-navy-foreground">
@@ -316,22 +307,46 @@ function Index() {
               <div className="mt-10 grid gap-5 sm:grid-cols-2">
                 <div className="rounded-2xl border-2 border-gold bg-navy-foreground/10 p-6 shadow-lg">
                   <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
-                    <BankIcon /> Bank Transfer
+                    <span className="text-lg">🏛️</span> Bank Transfer
                   </div>
                   <div className="mt-4 space-y-3 text-sm">
-                    <Row label="Account Title" value="Muhammad Imran Malik" />
-                    <Row label="Bank" value="MCB Bank Limited, Lahore" />
-                    <Row label="Account #" value="1069209731000337" mono big copyable />
-                    <Row label="IBAN" value="PK85MUCB1069209731000337" mono big copyable />
+                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
+                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Account Title</span>
+                      <span className="text-right font-bold text-navy-foreground">Muhammad Imran Malik</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
+                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Bank</span>
+                      <span className="text-right font-bold text-navy-foreground">MCB Bank Limited, Lahore</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
+                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Account #</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-right font-mono font-bold text-navy-foreground text-lg sm:text-xl">1069209731000337</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
+                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">IBAN</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-right font-mono font-bold text-navy-foreground text-lg sm:text-xl">PK85MUCB1069209731000337</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="rounded-2xl border-2 border-gold bg-navy-foreground/10 p-6 shadow-lg">
                   <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
-                    <WalletIcon /> EasyPaisa
+                    <span className="text-lg">📱</span> EasyPaisa
                   </div>
                   <div className="mt-4 space-y-3 text-sm">
-                    <Row label="Account Title" value="Muhammad Imran Malik" />
-                    <Row label="Number" value="0316 0285386" mono big copyable />
+                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
+                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Account Title</span>
+                      <span className="text-right font-bold text-navy-foreground">Muhammad Imran Malik</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
+                      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">Number</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-right font-mono font-bold text-navy-foreground text-lg sm:text-xl">0316 0285386</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="mt-6 rounded-lg bg-gold/10 p-3 text-xs text-gold">
                     ⚡ Instant verification available via WhatsApp after transfer.
@@ -362,7 +377,6 @@ function Index() {
         )}
       </div>
 
-      {/* COUNTRIES */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-navy sm:text-4xl">Countries We Serve</h2>
@@ -378,7 +392,6 @@ function Index() {
         </div>
       </section>
 
-      {/* E-VISA + TOURS */}
       <section className="bg-secondary/40 py-20 sm:py-24">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div className="rounded-2xl border border-border bg-card p-8">
@@ -415,7 +428,6 @@ function Index() {
         </div>
       </section>
 
-      {/* TRUST */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -433,7 +445,6 @@ function Index() {
         </div>
       </section>
 
-      {/* FAQ */}
       <section id="faq" className="bg-secondary/40 py-20 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -459,7 +470,6 @@ function Index() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="bg-navy text-navy-foreground">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-3 lg:px-8">
           <div>
@@ -495,40 +505,7 @@ function Index() {
   );
 }
 
+// ===== FORM COMPONENTS =====
+
 const inputCls =
-  "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-navy focus:ring-2 focus:ring-navy/20";
-
-function Field({ label, required, children, className = "" }: { label: string; required?: boolean; children: ReactNode; className?: string }) {
-  return (
-    <label className={`block ${className}`}>
-      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-navy">
-        {label} {required && <span className="text-destructive">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}
-
-function BankIcon() {
-  return <span className="text-lg">🏛️</span>;
-}
-
-function WalletIcon() {
-  return <span className="text-lg">📱</span>;
-}
-
-function CopyIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
-      <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z" />
-    </svg>
-  );
-}
-
-function Row({ label, value, mono, big, copyable }: { label: string; value: string; mono?: boolean; big?: boolean; copyable?: boolean }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(value.replace(/\s/g, ""));
-    setCopied(true);
-    setTimeout(() => setCopied(false),
+  "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border
