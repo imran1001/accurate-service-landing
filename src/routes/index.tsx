@@ -563,4 +563,6 @@ function Row({ label, value, mono, big, copyable }: { label: string; value: stri
 function SubmitBtn() {
   return (
     <div className="sm:col-span-2">
-      <button type="submit" className="w-full rounded-lg bg-navy py-3.5 text-sm font-semibold text-n
+      <button
+        type="submit"
+        className="w-full rounded-lg bg-navy py-3.5 text-sm font
