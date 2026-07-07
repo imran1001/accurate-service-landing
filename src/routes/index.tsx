@@ -90,6 +90,7 @@ function Index() {
             </div>
           </div>
           
+          <a
             href="https://wa.me/923160285386"
             className="hidden rounded-full border border-gold px-4 py-2 text-sm font-medium text-gold transition-colors hover:bg-gold hover:text-gold-foreground sm:inline-block"
           >
@@ -125,6 +126,7 @@ function Index() {
                 Get Started →
               </button>
               
+              <a
                 href="#faq"
                 className="rounded-full border border-navy-foreground/30 px-8 py-3.5 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10"
               >
@@ -275,11 +277,11 @@ function Index() {
               </div>
               <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
                 {selectedService === "flight-hotel" && <FlightHotelForm onSubmit={handleSubmit} />}
-                {selectedService === "cover-itinerary" && <CoverItineraryForm onSubmit={handleSubmit} />}
-                {selectedService === "insurance" && <InsuranceForm onSubmit={handleSubmit} />}
-                {selectedService === "complete" && <CompleteFileForm onSubmit={handleSubmit} />}
-                {selectedService === "appointment" && <AppointmentForm onSubmit={handleSubmit} />}
-                {selectedService === "umrah" && <UmrahForm onSubmit={handleSubmit} />}
+                {selectedService === "cover-itinerary" && <PlaceholderForm onSubmit={handleSubmit} />}
+                {selectedService === "insurance" && <PlaceholderForm onSubmit={handleSubmit} />}
+                {selectedService === "complete" && <PlaceholderForm onSubmit={handleSubmit} />}
+                {selectedService === "appointment" && <PlaceholderForm onSubmit={handleSubmit} />}
+                {selectedService === "umrah" && <PlaceholderForm onSubmit={handleSubmit} />}
               </div>
             </div>
           </section>
@@ -330,11 +332,11 @@ function Index() {
                 further guidance and updates via WhatsApp as soon as possible.
               </div>
 
-              
+              <a
                 href={`https://wa.me/923160285386?text=${waMessage}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-[oklch(0.68_0.17_150)] py-5 text-lg font-bold text-white shadow-xl shadow-black/20 transition-transform hover:-translate-y-0.5 animate-pulse-slow"
+                className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-[oklch(0.68_0.17_150)] py-5 text-lg font-bold text-white shadow-xl shadow-black/20 transition-transform hover:-translate-y-0.5"
               >
                 <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" aria-hidden><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5 0-.2 0-.4-.1-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.2zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
                 Send Payment Receipt on WhatsApp
@@ -608,197 +610,37 @@ function FlightHotelForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
         <input required value={v.departureCity} onChange={(e) => setV({ ...v, departureCity: e.target.value })} className={inputCls} placeholder="e.g. Lahore" />
       </Field>
       <Field label="Destination Country" required>
-        <input required value={v.destCountry} onChange={(e) => setV({ ...v, destCountry: e.target.value })} className={inputCls} />
+        <CountrySelect value={v.destCountry} onChange={(val) => setV({ ...v, destCountry: val })} />
       </Field>
       <Field label="Destination City" required>
         <input required value={v.destCity} onChange={(e) => setV({ ...v, destCity: e.target.value })} className={inputCls} />
       </Field>
-      <Field label="Travel Date — Departure" required>
+      <Field label="Departure Date" required>
         <input type="date" required value={v.departDate} onChange={(e) => setV({ ...v, departDate: e.target.value })} className={inputCls} />
       </Field>
-      <Field label="Travel Date — Return" required>
+      <Field label="Return Date" required>
         <input type="date" required value={v.returnDate} onChange={(e) => setV({ ...v, returnDate: e.target.value })} className={inputCls} />
       </Field>
-      <Field label="Purpose" required>
+      <Field label="Purpose of Travel" required>
         <select required value={v.purpose} onChange={(e) => setV({ ...v, purpose: e.target.value })} className={inputCls}>
-          <option value="">Select…</option>
-          <option>Visa Application Proof</option>
-          <option>Actual Travel</option>
+          <option value="">Select purpose…</option>
+          {PURPOSE_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
         </select>
       </Field>
-      <Field label="Special Instructions (optional)" className="sm:col-span-2">
-        <textarea rows={4} value={v.notes} onChange={(e) => setV({ ...v, notes: e.target.value })} className={inputCls} />
+      <Field label="Additional Notes" className="sm:col-span-2">
+        <textarea value={v.notes} onChange={(e) => setV({ ...v, notes: e.target.value })} className={`${inputCls} h-24 resize-none`} />
       </Field>
       <SubmitBtn />
     </form>
   );
 }
 
-/* ------------- FORM 2: Cover Letter + Itinerary ------------- */
-function CoverItineraryForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
-  const [v, setV] = useState({
-    name: "", email: "", whatsapp: "",
-    destCountry: "", destCity: "", fromDate: "", toDate: "", purpose: "", notes: "",
-  });
+/* ------------- PLACEHOLDER FOR OTHER FORMS ------------- */
+function PlaceholderForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
+  const [v, setV] = useState({ name: "", email: "", whatsapp: "" });
   return (
     <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
       <ContactFields v={v} set={setV} />
-      <Field label="Destination Country" required>
-        <input required value={v.destCountry} onChange={(e) => setV({ ...v, destCountry: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Destination City" required>
-        <input required value={v.destCity} onChange={(e) => setV({ ...v, destCity: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Travel Date — From" required>
-        <input type="date" required value={v.fromDate} onChange={(e) => setV({ ...v, fromDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Travel Date — To" required>
-        <input type="date" required value={v.toDate} onChange={(e) => setV({ ...v, toDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Purpose of Visit" required className="sm:col-span-2">
-        <select required value={v.purpose} onChange={(e) => setV({ ...v, purpose: e.target.value })} className={inputCls}>
-          <option value="">Select…</option>
-          {PURPOSE_OPTIONS.map((p) => <option key={p}>{p}</option>)}
-        </select>
-      </Field>
-      <Field label="Any specific details you want included in your cover letter or itinerary" className="sm:col-span-2">
-        <textarea rows={4} value={v.notes} onChange={(e) => setV({ ...v, notes: e.target.value })} className={inputCls} />
-      </Field>
-      <SubmitBtn />
-    </form>
-  );
-}
-
-/* ------------- FORM 3: Travel Insurance ------------- */
-function InsuranceForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
-  const [v, setV] = useState({
-    name: "", email: "", whatsapp: "",
-    destCountry: "", startDate: "", endDate: "", travelers: "1", oldestAge: "",
-  });
-  return (
-    <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
-      <ContactFields v={v} set={setV} />
-      <Field label="Destination Country" required className="sm:col-span-2">
-        <CountrySelect value={v.destCountry} onChange={(c) => setV({ ...v, destCountry: c })} />
-      </Field>
-      <Field label="Trip Start Date" required>
-        <input type="date" required value={v.startDate} onChange={(e) => setV({ ...v, startDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Trip End Date" required>
-        <input type="date" required value={v.endDate} onChange={(e) => setV({ ...v, endDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Number of Travelers" required>
-        <input type="number" min={1} required value={v.travelers} onChange={(e) => setV({ ...v, travelers: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Age of Oldest Traveler" required>
-        <input type="number" min={0} required value={v.oldestAge} onChange={(e) => setV({ ...v, oldestAge: e.target.value })} className={inputCls} placeholder="For premium calculation" />
-      </Field>
-      <SubmitBtn />
-    </form>
-  );
-}
-
-/* ------------- FORM 4: Complete Visa File ------------- */
-function CompleteFileForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
-  const [v, setV] = useState({
-    name: "", email: "", whatsapp: "",
-    destCountry: "", destCity: "", fromDate: "", toDate: "", purpose: "", travelers: "1", notes: "",
-  });
-  return (
-    <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
-      <ContactFields v={v} set={setV} />
-      <Field label="Destination Country" required>
-        <CountrySelect value={v.destCountry} onChange={(c) => setV({ ...v, destCountry: c })} />
-      </Field>
-      <Field label="Destination City" required>
-        <input required value={v.destCity} onChange={(e) => setV({ ...v, destCity: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Travel Date — From" required>
-        <input type="date" required value={v.fromDate} onChange={(e) => setV({ ...v, fromDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Travel Date — To" required>
-        <input type="date" required value={v.toDate} onChange={(e) => setV({ ...v, toDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Purpose of Visit" required>
-        <select required value={v.purpose} onChange={(e) => setV({ ...v, purpose: e.target.value })} className={inputCls}>
-          <option value="">Select…</option>
-          {PURPOSE_OPTIONS.map((p) => <option key={p}>{p}</option>)}
-        </select>
-      </Field>
-      <Field label="Number of Travelers" required>
-        <input type="number" min={1} required value={v.travelers} onChange={(e) => setV({ ...v, travelers: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Specific Instructions" className="sm:col-span-2">
-        <textarea rows={4} value={v.notes} onChange={(e) => setV({ ...v, notes: e.target.value })} className={inputCls} />
-      </Field>
-      <SubmitBtn />
-    </form>
-  );
-}
-
-/* ------------- FORM 5: Appointment Assistance ------------- */
-function AppointmentForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
-  const [v, setV] = useState({
-    name: "", email: "", whatsapp: "",
-    destCountry: "", destCity: "", fromDate: "", toDate: "",
-  });
-  return (
-    <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
-      <ContactFields v={v} set={setV} />
-      <Field label="Destination Country" required>
-        <CountrySelect value={v.destCountry} onChange={(c) => setV({ ...v, destCountry: c })} />
-      </Field>
-      <Field label="Destination City" required>
-        <input required value={v.destCity} onChange={(e) => setV({ ...v, destCity: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Preferred Appointment — From" required>
-        <input type="date" required value={v.fromDate} onChange={(e) => setV({ ...v, fromDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Preferred Appointment — To" required>
-        <input type="date" required value={v.toDate} onChange={(e) => setV({ ...v, toDate: e.target.value })} className={inputCls} />
-      </Field>
-      <SubmitBtn />
-    </form>
-  );
-}
-
-/* ------------- FORM 6: Umrah ------------- */
-function UmrahForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
-  const [v, setV] = useState({
-    name: "", email: "", whatsapp: "",
-    fromDate: "", toDate: "", pilgrims: "1", hotel: "", packageType: "", notes: "",
-  });
-  return (
-    <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
-      <ContactFields v={v} set={setV} />
-      <Field label="Umrah Dates — From" required>
-        <input type="date" required value={v.fromDate} onChange={(e) => setV({ ...v, fromDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Umrah Dates — To" required>
-        <input type="date" required value={v.toDate} onChange={(e) => setV({ ...v, toDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Number of Pilgrims" required>
-        <input type="number" min={1} required value={v.pilgrims} onChange={(e) => setV({ ...v, pilgrims: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Hotel Preference" required>
-        <select required value={v.hotel} onChange={(e) => setV({ ...v, hotel: e.target.value })} className={inputCls}>
-          <option value="">Select…</option>
-          <option>Makkah Only</option>
-          <option>Madinah Only</option>
-          <option>Both</option>
-        </select>
-      </Field>
-      <Field label="Package Type" required className="sm:col-span-2">
-        <select required value={v.packageType} onChange={(e) => setV({ ...v, packageType: e.target.value })} className={inputCls}>
-          <option value="">Select…</option>
-          <option>Economy</option>
-          <option>Standard</option>
-          <option>Premium</option>
-        </select>
-      </Field>
-      <Field label="Specific Instructions" className="sm:col-span-2">
-        <textarea rows={4} value={v.notes} onChange={(e) => setV({ ...v, notes: e.target.value })} className={inputCls} />
-      </Field>
       <SubmitBtn />
     </form>
   );
