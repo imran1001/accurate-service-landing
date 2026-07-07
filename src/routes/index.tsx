@@ -49,9 +49,18 @@ const FAQS = [
   { q: "How do I share documents with you?", a: "Everything happens on WhatsApp — after payment confirmation, our team will guide you through document submission step by step." },
 ];
 
+/* Turns a submission object into readable WhatsApp lines, skipping empty values */
+function buildSummaryLines(data: Record<string, string>, labels: Record<string, string>) {
+  return Object.entries(data)
+    .filter(([, val]) => val && val.trim() !== "")
+    .map(([key, val]) => `${labels[key] || key}: ${val}`)
+    .join("\n");
+}
+
 function Index() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submissionSummary, setSubmissionSummary] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const servicesRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -63,18 +72,19 @@ function Index() {
   const handleSelectService = (id: string) => {
     setSelectedService(id);
     setSubmitted(false);
+    setSubmissionSummary("");
     setTimeout(() => scrollTo(formRef), 50);
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const handleFormSubmit = (summary: string) => {
+    setSubmissionSummary(summary);
     setSubmitted(true);
     setTimeout(() => scrollTo(paymentRef), 50);
   };
 
   const selectedName = selectedService ? SERVICE_META[selectedService].name : "";
   const waMessage = encodeURIComponent(
-    `Hi, I have completed payment for ${selectedName || "your service"}. Please find my receipt attached.`,
+    `Hi, I have completed payment for ${selectedName || "your service"}.\n\n${submissionSummary}\n\nPlease find my receipt attached.`,
   );
 
   return (
@@ -90,7 +100,6 @@ function Index() {
             </div>
           </div>
           
-          <a
             href="https://wa.me/923160285386"
             className="hidden rounded-full border border-gold px-4 py-2 text-sm font-medium text-gold transition-colors hover:bg-gold hover:text-gold-foreground sm:inline-block"
           >
@@ -126,7 +135,6 @@ function Index() {
                 Get Started →
               </button>
               
-              <a
                 href="#faq"
                 className="rounded-full border border-navy-foreground/30 px-8 py-3.5 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10"
               >
@@ -276,12 +284,12 @@ function Index() {
                 </p>
               </div>
               <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
-                {selectedService === "flight-hotel" && <FlightHotelForm onSubmit={handleSubmit} />}
-                {selectedService === "cover-itinerary" && <PlaceholderForm onSubmit={handleSubmit} />}
-                {selectedService === "insurance" && <PlaceholderForm onSubmit={handleSubmit} />}
-                {selectedService === "complete" && <PlaceholderForm onSubmit={handleSubmit} />}
-                {selectedService === "appointment" && <PlaceholderForm onSubmit={handleSubmit} />}
-                {selectedService === "umrah" && <PlaceholderForm onSubmit={handleSubmit} />}
+                {selectedService === "flight-hotel" && <FlightHotelForm onSubmit={handleFormSubmit} />}
+                {selectedService === "cover-itinerary" && <CoverItineraryForm onSubmit={handleFormSubmit} />}
+                {selectedService === "insurance" && <InsuranceForm onSubmit={handleFormSubmit} />}
+                {selectedService === "complete" && <CompleteFileForm onSubmit={handleFormSubmit} />}
+                {selectedService === "appointment" && <AppointmentForm onSubmit={handleFormSubmit} />}
+                {selectedService === "umrah" && <UmrahForm onSubmit={handleFormSubmit} />}
               </div>
             </div>
           </section>
@@ -310,338 +318,4 @@ function Index() {
                   </div>
                   <div className="mt-4 space-y-3 text-sm">
                     <Row label="Account Title" value="Muhammad Imran Malik" />
-                    <Row label="Bank" value="MCB Bank Limited, Lahore" />
-                    <Row label="Account #" value="1069209731000337" mono big copyable />
-                    <Row label="IBAN" value="PK85MUCB1069209731000337" mono big copyable />
-                  </div>
-                </div>
-                <div className="rounded-2xl border-2 border-gold bg-navy-foreground/10 p-6 shadow-lg">
-                  <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
-                    <WalletIcon /> EasyPaisa
-                  </div>
-                  <div className="mt-4 space-y-3 text-sm">
-                    <Row label="Account Title" value="Muhammad Imran Malik" />
-                    <Row label="Number" value="0316 0285386" mono big copyable />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 rounded-xl border-l-4 border-gold bg-gold/15 p-5 text-base font-bold leading-relaxed text-navy-foreground">
-                After completing payment, please send your transfer/payment receipt screenshot to our WhatsApp number
-                below. Our team will confirm receipt and begin processing your documents immediately. You will receive
-                further guidance and updates via WhatsApp as soon as possible.
-              </div>
-
-              <a
-                href={`https://wa.me/923160285386?text=${waMessage}`}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-[oklch(0.68_0.17_150)] py-5 text-lg font-bold text-white shadow-xl shadow-black/20 transition-transform hover:-translate-y-0.5"
-              >
-                <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" aria-hidden><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5 0-.2 0-.4-.1-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.2zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-                Send Payment Receipt on WhatsApp
-              </a>
-            </div>
-          </section>
-        )}
-      </div>
-
-      {/* COUNTRIES */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-navy sm:text-4xl">Countries We Serve</h2>
-          <p className="mt-3 text-muted-foreground">Consular expertise across the world's most-requested destinations.</p>
-        </div>
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
-          {COUNTRIES_GRID.map((c) => (
-            <div key={c.name} className="rounded-xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-1 hover:border-gold hover:shadow-md">
-              <div className="text-3xl">{c.flag}</div>
-              <div className="mt-2 text-sm font-medium text-navy">{c.name}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* E-VISA + TOURS */}
-      <section className="bg-secondary/40 py-20 sm:py-24">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <div className="rounded-2xl border border-border bg-card p-8">
-            <h2 className="text-2xl font-bold text-navy sm:text-3xl">E-Visa Processing</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Fast electronic visa applications for supported destinations.</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {EVISA.map((c) => (
-                <span key={c} className="rounded-full border border-navy/15 bg-navy/5 px-3 py-1.5 text-sm font-medium text-navy">{c}</span>
-              ))}
-            </div>
-            <div className="mt-6 rounded-xl bg-gold/10 p-4 text-sm text-navy">
-              All-Inclusive: <strong className="font-bold">PKR 12,000</strong> per country
-              <p className="mt-1.5 text-xs text-navy/70">
-                Includes government e-visa fee + our complete processing service — no hidden costs
-              </p>
-            </div>
-            <a href="https://wa.me/923160285386" target="_blank" rel="noreferrer" className="mt-6 inline-flex rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-navy-foreground transition-transform hover:-translate-y-0.5">
-              Inquire on WhatsApp
-            </a>
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-8">
-            <h2 className="text-2xl font-bold text-navy sm:text-3xl">Tour Packages</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Custom itineraries designed around your budget and interests.</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {TOURS.map((c) => (
-                <span key={c} className="rounded-full border border-navy/15 bg-navy/5 px-3 py-1.5 text-sm font-medium text-navy">{c}</span>
-              ))}
-            </div>
-            <div className="mt-6 rounded-xl bg-gold/10 p-4 text-sm text-navy">Custom itineraries available — quoted individually.</div>
-            <a href="https://wa.me/923160285386" target="_blank" rel="noreferrer" className="mt-6 inline-flex rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-navy-foreground transition-transform hover:-translate-y-0.5">
-              Inquire via WhatsApp
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* TRUST */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { t: "19+ Years Experience", d: "Deep consular knowledge across regions." },
-            { t: "AI-Powered Speed", d: "Files prepared in 24–48 hours." },
-            { t: "Consultant Reviewed", d: "Every file audited by a human expert." },
-            { t: "Refund Protection", d: "Insurance & appointment fee refunds available." },
-          ].map((b) => (
-            <div key={b.t} className="rounded-2xl border border-border bg-card p-6 text-center">
-              <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-gold/15 text-xl text-gold">★</div>
-              <h3 className="mt-4 font-bold text-navy">{b.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{b.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="bg-secondary/40 py-20 sm:py-24">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-navy sm:text-4xl">Frequently Asked Questions</h2>
-          </div>
-          <div className="mt-10 space-y-3">
-            {FAQS.map((f, i) => {
-              const open = openFaq === i;
-              return (
-                <div key={f.q} className="overflow-hidden rounded-xl border border-border bg-card">
-                  <button
-                    onClick={() => setOpenFaq(open ? null : i)}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
-                  >
-                    <span className="font-semibold text-navy">{f.q}</span>
-                    <span className={`grid h-7 w-7 flex-none place-items-center rounded-full bg-gold/15 text-gold transition-transform ${open ? "rotate-45" : ""}`}>+</span>
-                  </button>
-                  {open && <div className="border-t border-border px-5 py-4 text-sm leading-relaxed text-muted-foreground">{f.a}</div>}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="bg-navy text-navy-foreground">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-3 lg:px-8">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="grid h-9 w-9 place-items-center rounded-md bg-gold font-bold text-gold-foreground">A</div>
-              <div className="text-base font-bold">Accurate Consultancy</div>
-            </div>
-            <p className="mt-4 text-sm text-navy-foreground/70">
-              Visa & travel document specialists. 19 years of immigration expertise, packaged into files embassies expect.
-            </p>
-          </div>
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-gold">Contact</div>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li>WhatsApp: <a href="https://wa.me/923160285386" className="hover:text-gold">0316 0285386</a></li>
-              <li>Email: <a href="mailto:info@accurate-consultancy.com" className="hover:text-gold">info@accurate-consultancy.com</a></li>
-            </ul>
-          </div>
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-gold">Ready to start?</div>
-            <button onClick={() => scrollTo(servicesRef)} className="mt-4 rounded-full bg-gold px-6 py-2.5 text-sm font-semibold text-gold-foreground">
-              View Services
-            </button>
-          </div>
-        </div>
-        <div className="border-t border-navy-foreground/10">
-          <div className="mx-auto max-w-7xl px-4 py-5 text-center text-xs text-navy-foreground/50 sm:px-6 lg:px-8">
-            © {new Date().getFullYear()} Accurate Consultancy. All rights reserved.
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-const inputCls =
-  "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-navy focus:ring-2 focus:ring-navy/20";
-
-function Field({ label, required, children, className = "" }: { label: string; required?: boolean; children: ReactNode; className?: string }) {
-  return (
-    <label className={`block ${className}`}>
-      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-navy">
-        {label} {required && <span className="text-destructive">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}
-
-function BankIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
-      <path d="M12 2 2 7v2h20V7L12 2zM4 11v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z" />
-    </svg>
-  );
-}
-
-function WalletIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
-      <path d="M21 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h17a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-1a2 2 0 0 1 0-4h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zM4 5h13a2 2 0 0 1 2 2H4a0 0 0 0 1 0 0V5z" />
-    </svg>
-  );
-}
-
-function CopyIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
-      <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z" />
-    </svg>
-  );
-}
-
-function Row({ label, value, mono, big, copyable }: { label: string; value: string; mono?: boolean; big?: boolean; copyable?: boolean }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(value.replace(/\s/g, ""));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1800);
-  };
-
-  return (
-    <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/10 py-2 last:border-0">
-      <span className="text-xs uppercase tracking-wider text-navy-foreground/60">{label}</span>
-      <div className="flex items-center gap-2">
-        <span
-          className={`text-right font-bold text-navy-foreground ${mono ? "font-mono" : ""} ${
-            big ? "text-lg sm:text-xl" : "text-sm"
-          }`}
-        >
-          {value}
-        </span>
-        {copyable && (
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="flex-none rounded-md bg-gold/20 p-1.5 text-gold transition-colors hover:bg-gold hover:text-gold-foreground"
-            aria-label={`Copy ${label}`}
-          >
-            {copied ? (
-              <span className="block px-1 text-[10px] font-bold">✓</span>
-            ) : (
-              <CopyIcon />
-            )}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SubmitBtn() {
-  return (
-    <div className="sm:col-span-2">
-      <button type="submit" className="w-full rounded-lg bg-navy py-3.5 text-sm font-semibold text-navy-foreground transition-transform hover:-translate-y-0.5">
-        Continue to Payment →
-      </button>
-    </div>
-  );
-}
-
-function CountrySelect({ value, onChange, id }: { value: string; onChange: (v: string) => void; id?: string }) {
-  return (
-    <select required id={id} value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
-      <option value="">Select country…</option>
-      <optgroup label="Schengen Area">
-        {SCHENGEN_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-      </optgroup>
-      <optgroup label="Other Countries">
-        {OTHER_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-      </optgroup>
-    </select>
-  );
-}
-
-function ContactFields({ v, set }: { v: { name: string; email: string; whatsapp: string }; set: (v: any) => void }) {
-  return (
-    <>
-      <Field label="Full Name" required>
-        <input required value={v.name} onChange={(e) => set({ ...v, name: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Email" required>
-        <input type="email" required value={v.email} onChange={(e) => set({ ...v, email: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="WhatsApp Number" required>
-        <input required value={v.whatsapp} onChange={(e) => set({ ...v, whatsapp: e.target.value })} className={inputCls} placeholder="03XX XXXXXXX" />
-      </Field>
-    </>
-  );
-}
-
-/* ------------- FORM 1: Flight + Hotel ------------- */
-function FlightHotelForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
-  const [v, setV] = useState({
-    name: "", email: "", whatsapp: "",
-    departureCity: "", destCountry: "", destCity: "",
-    departDate: "", returnDate: "", purpose: "", notes: "",
-  });
-  return (
-    <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
-      <ContactFields v={v} set={setV} />
-      <Field label="Departure City" required>
-        <input required value={v.departureCity} onChange={(e) => setV({ ...v, departureCity: e.target.value })} className={inputCls} placeholder="e.g. Lahore" />
-      </Field>
-      <Field label="Destination Country" required>
-        <CountrySelect value={v.destCountry} onChange={(val) => setV({ ...v, destCountry: val })} />
-      </Field>
-      <Field label="Destination City" required>
-        <input required value={v.destCity} onChange={(e) => setV({ ...v, destCity: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Departure Date" required>
-        <input type="date" required value={v.departDate} onChange={(e) => setV({ ...v, departDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Return Date" required>
-        <input type="date" required value={v.returnDate} onChange={(e) => setV({ ...v, returnDate: e.target.value })} className={inputCls} />
-      </Field>
-      <Field label="Purpose of Travel" required>
-        <select required value={v.purpose} onChange={(e) => setV({ ...v, purpose: e.target.value })} className={inputCls}>
-          <option value="">Select purpose…</option>
-          {PURPOSE_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
-        </select>
-      </Field>
-      <Field label="Additional Notes" className="sm:col-span-2">
-        <textarea value={v.notes} onChange={(e) => setV({ ...v, notes: e.target.value })} className={`${inputCls} h-24 resize-none`} />
-      </Field>
-      <SubmitBtn />
-    </form>
-  );
-}
-
-/* ------------- PLACEHOLDER FOR OTHER FORMS ------------- */
-function PlaceholderForm({ onSubmit }: { onSubmit: (e: FormEvent) => void }) {
-  const [v, setV] = useState({ name: "", email: "", whatsapp: "" });
-  return (
-    <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
-      <ContactFields v={v} set={setV} />
-      <SubmitBtn />
-    </form>
-  );
-}
+                    <Row label="Bank" value="MCB Bank
