@@ -100,7 +100,10 @@ function Index() {
             </div>
           </div>
           
+          <a
             href="https://wa.me/923160285386"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden rounded-full border border-gold px-4 py-2 text-sm font-medium text-gold transition-colors hover:bg-gold hover:text-gold-foreground sm:inline-block"
           >
             WhatsApp Us
@@ -135,6 +138,7 @@ function Index() {
                 Get Started →
               </button>
               
+              <a
                 href="#faq"
                 className="rounded-full border border-navy-foreground/30 px-8 py-3.5 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10"
               >
@@ -318,4 +322,316 @@ function Index() {
                   </div>
                   <div className="mt-4 space-y-3 text-sm">
                     <Row label="Account Title" value="Muhammad Imran Malik" />
-                    <Row label="Bank" value="MCB Bank
+                    <Row label="Bank" value="MCB Bank Limited" />
+                    <Row label="Account Number" value="0987 6543 2109 8765" />
+                    <Row label="IBAN" value="PK36 MCIB 0987 6543 2109 8765" />
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-navy-foreground/20 bg-navy-foreground/5 p-6 shadow-lg">
+                  <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
+                    <MobileIcon /> Mobile Wallets
+                  </div>
+                  <div className="mt-4 space-y-3 text-sm">
+                    <Row label="JazzCash / Easypaisa" value="0316 0285386" />
+                    <Row label="Account Name" value="Muhammad Imran Malik" />
+                  </div>
+                  <div className="mt-6 rounded-lg bg-gold/10 p-3 text-xs text-gold">
+                    ⚡ Instant verification available via WhatsApp after transfer.
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-10 text-center">
+                <a
+                  href={`https://wa.me/923160285386?text=${waMessage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-8 py-4 text-base font-bold text-gold-foreground shadow-xl transition-transform hover:scale-105"
+                >
+                  <span>Share Screenshot on WhatsApp</span>
+                  <span>→</span>
+                </a>
+                <p className="mt-3 text-xs text-navy-foreground/60">
+                  Clicking will open WhatsApp with your application details pre-filled.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* FAQ */}
+      <section id="faq" className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-navy">Frequently Asked Questions</h2>
+          <p className="mt-2 text-muted-foreground">Everything you need to know about our consultancy and process.</p>
+        </div>
+        <div className="mt-10 space-y-4">
+          {FAQS.map((faq, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
+              <button
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                className="flex w-full items-center justify-between p-5 text-left font-semibold text-foreground transition-colors hover:bg-secondary/50"
+              >
+                <span>{faq.q}</span>
+                <span className="ml-4 text-lg font-bold text-gold">{openFaq === i ? "−" : "+"}</span>
+              </button>
+              {openFaq === i && (
+                <div className="border-t border-border/50 bg-secondary/20 p-5 text-sm leading-relaxed text-muted-foreground">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-border bg-navy py-12 text-navy-foreground/70 text-sm">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <p font-bold text-navy-foreground>Accurate Consultancy © {new Date().getFullYear()}</p>
+          <p className="mt-1 text-xs">Visa &amp; Travel Document Specialists — Lahore, Pakistan</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+/* --- HELPER COMPONENTS --- */
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between border-b border-navy-foreground/10 pb-2">
+      <span className="text-navy-foreground/70">{label}</span>
+      <span className="font-mono font-bold text-navy-foreground">{value}</span>
+    </div>
+  );
+}
+
+function BankIcon() {
+  return <span className="text-lg">🏛️</span>;
+}
+
+function MobileIcon() {
+  return <span className="text-lg">📱</span>;
+}
+
+/* --- FORM SUB-COMPONENTS --- */
+
+interface FormProps {
+  onSubmit: (summary: string) => void;
+}
+
+function FlightHotelForm({ onSubmit }: FormProps) {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const summary = buildSummaryLines(data, {
+      fullName: "Full Name",
+      passportNo: "Passport Number",
+      destinations: "Destinations",
+      travelDates: "Estimated Travel Dates",
+    });
+    onSubmit(summary);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input label="Full Name (as on Passport)" name="fullName" required />
+      <Input label="Passport Number" name="passportNo" required />
+      <Input label="Destination Country/Cities" name="destinations" required />
+      <Input label="Estimated Travel Dates" name="travelDates" placeholder="e.g., 10 Aug - 25 Aug 2026" required />
+      <SubmitButton label="Proceed to Payment" />
+    </form>
+  );
+}
+
+function CoverItineraryForm({ onSubmit }: FormProps) {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const summary = buildSummaryLines(data, {
+      fullName: "Full Name",
+      purpose: "Travel Purpose",
+      employmentStatus: "Employment Status",
+      travelDates: "Travel Dates",
+    });
+    onSubmit(summary);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input label="Full Name" name="fullName" required />
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wider text-foreground/80">Purpose of Trip</label>
+        <select name="purpose" className="rounded-lg border border-border bg-background p-2.5 text-sm outline-none focus:border-gold">
+          {PURPOSE_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </div>
+      <Input label="Current Employment / Occupation Status" name="employmentStatus" placeholder="e.g., Salaried Software Engineer" required />
+      <Input label="Proposed Travel Dates" name="travelDates" required />
+      <SubmitButton label="Proceed to Payment" />
+    </form>
+  );
+}
+
+function InsuranceForm({ onSubmit }: FormProps) {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const summary = buildSummaryLines(data, {
+      fullName: "Full Name",
+      age: "Age",
+      coverageRegion: "Coverage Region",
+      duration: "Trip Duration (Days)",
+    });
+    onSubmit(summary);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input label="Full Name" name="fullName" required />
+      <Input label="Age" name="age" type="number" required />
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wider text-foreground/80">Region</label>
+        <select name="coverageRegion" className="rounded-lg border border-border bg-background p-2.5 text-sm outline-none focus:border-gold">
+          <option value="Schengen Area">Schengen Area (0 Euro Coverage)</option>
+          <option value="Worldwide">Worldwide</option>
+          <option value="UK / USA / Canada">UK / USA / Canada</option>
+        </select>
+      </div>
+      <Input label="Duration (in Days)" name="duration" type="number" required />
+      <SubmitButton label="Proceed to Payment" />
+    </form>
+  );
+}
+
+function CompleteFileForm({ onSubmit }: FormProps) {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const summary = buildSummaryLines(data, {
+      fullName: "Full Name",
+      phone: "WhatsApp Number",
+      targetCountry: "Target Country",
+      travelMonth: "Tentative Travel Month",
+    });
+    onSubmit(summary);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input label="Full Name" name="fullName" required />
+      <Input label="WhatsApp Phone Number" name="phone" required />
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wider text-foreground/80">Target Country</label>
+        <select name="targetCountry" className="rounded-lg border border-border bg-background p-2.5 text-sm outline-none focus:border-gold">
+          <optgroup label="Schengen Area">
+            {SCHENGEN_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </optgroup>
+          <optgroup label="Other Major Destinations">
+            {OTHER_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </optgroup>
+        </select>
+      </div>
+      <Input label="Tentative Travel Month" name="travelMonth" placeholder="e.g., September 2026" required />
+      <SubmitButton label="Proceed to Payment" />
+    </form>
+  );
+}
+
+function AppointmentForm({ onSubmit }: FormProps) {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const summary = buildSummaryLines(data, {
+      fullName: "Full Name",
+      embassy: "Target Embassy/Consulate",
+      preferredDate: "Preferred Appointment Timeframe",
+    });
+    onSubmit(summary);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input label="Full Name" name="fullName" required />
+      <Input label="Embassy / Consulate Location" name="embassy" placeholder="e.g., German Embassy Islamabad" required />
+      <Input label="Preferred Timeframe" name="preferredDate" placeholder="e.g., Anytime in August" required />
+      <SubmitButton label="Proceed to Payment" />
+    </form>
+  );
+}
+
+function UmrahForm({ onSubmit }: FormProps) {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const summary = buildSummaryLines(data, {
+      fullName: "Contact Person Name",
+      passengers: "Number of Pilgrims",
+      packageTier: "Preferred Tier",
+      travelDates: "Expected Travel Dates",
+    });
+    onSubmit(summary);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input label="Contact Person Name" name="fullName" required />
+      <Input label="Total Pilgrims (Adults/Children)" name="passengers" placeholder="e.g., 2 Adults, 1 Child" required />
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wider text-foreground/80">Package Tier</label>
+        <select name="packageTier" className="rounded-lg border border-border bg-background p-2.5 text-sm outline-none focus:border-gold">
+          <option value="Economy (4-5 Star Outer Ring)">Economy (4-5 Star Outer Ring)</option>
+          <option value="Premium (Close Distance to Haram)">Premium (Close Distance to Haram)</option>
+          <option value="VIP / Custom (Clock Tower / Frontline)">VIP / Custom (Clock Tower / Frontline)</option>
+        </select>
+      </div>
+      <Input label="Expected Month / Days of Stay" name="travelDates" placeholder="e.g., 14 Days in November" required />
+      <SubmitButton label="Submit Inquiry via WhatsApp" />
+    </form>
+  );
+}
+
+/* --- FORM UI PRIMITIVES --- */
+
+function Input({ label, name, type = "text", placeholder, required = false }: {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-xs font-semibold uppercase tracking-wider text-foreground/80">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        required={required}
+        className="rounded-lg border border-border bg-background p-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-gold"
+      />
+    </div>
+  );
+}
+
+function SubmitButton({ label }: { label: string }) {
+  return (
+    <button
+      type="submit"
+      className="mt-4 w-full rounded-lg bg-navy py-3 text-sm font-semibold text-navy-foreground transition-transform hover:-translate-y-0.5 hover:bg-navy/90"
+    >
+      {label} →
+    </button>
+  );
+}
